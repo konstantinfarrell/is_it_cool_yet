@@ -4,8 +4,10 @@ I'm too lazy to look at my watch so here's a script that hits a weather API to s
 
 ## Install & Run
 
-  pip install requirements.txt
-  python main.py
+```
+pip install requirements.txt
+python main.py
+```
 
 ## You want this?
 
