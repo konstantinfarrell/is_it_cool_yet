@@ -1,0 +1,16 @@
+city:
+state:
+country:
+
+heat_threshold:
+cold_threshold:
+
+weather_api_token:
+
+twilio:
+  sid:
+  auth_token:
+  phone_number:
+
+numbers:
+  -
