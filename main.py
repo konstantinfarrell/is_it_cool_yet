@@ -6,8 +6,7 @@ import yaml
 from twilio.rest import Client
 
 
-cfg = 'weather_config.yaml'
-with open(cfg, 'r') as stream:
+with open('config.yaml', 'r') as stream:
     config = yaml.safe_load(stream)
 
 
@@ -26,7 +25,6 @@ t = config['twilio']
 TWILIO_SID = t['sid']
 TWILIO_AUTH_TOKEN = t['auth_token']
 TWILIO_PHONE_NUMBER = t['phone_number']
-
 SEND_TO = config['numbers']
 
 
@@ -37,6 +35,7 @@ def ping_weather():
     response = requests.get(WEATHER_URL)
     result = response.json()
     return result['main']['temp']
+
 
 def send_alert():
     for person in SEND_TO:
