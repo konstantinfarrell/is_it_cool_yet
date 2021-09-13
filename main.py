@@ -6,7 +6,8 @@ import yaml
 from twilio.rest import Client
 
 
-with open('config.yaml', 'r') as stream:
+cfg = 'config.yaml'
+with open(cfg, 'r') as stream:
     config = yaml.safe_load(stream)
 
 
@@ -25,6 +26,7 @@ t = config['twilio']
 TWILIO_SID = t['sid']
 TWILIO_AUTH_TOKEN = t['auth_token']
 TWILIO_PHONE_NUMBER = t['phone_number']
+
 SEND_TO = config['numbers']
 
 
@@ -32,29 +34,39 @@ client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
 
 
 def ping_weather():
-    response = requests.get(WEATHER_URL)
+    try:
+        response = requests.get(WEATHER_URL)
+    except Exception:
+        return None
     result = response.json()
     return result['main']['temp']
 
-
-def send_alert():
+def send_alert(message):
     for person in SEND_TO:
-        message = client.messages.create(
+        result = client.messages.create(
             from_=TWILIO_PHONE_NUMBER,
-            body='open the window! it\'s cool out!',
+            body=message,
             to=person)
 
 
 def main():
     alert_when_below = False
     while True:
+        wait = 60
         temp = ping_weather()
+        if not temp:
+            print('no response. sleeping')
+            time.sleep(wait * 3)
+            continue
         if temp > HEAT_THRESHOLD and alert_when_below == False:
             alert_when_below = True
         if alert_when_below == True and temp < COLD_THRESHOLD:
-            send_alert()
+            send_alert('\nOpen the window! It\'s cool out!')
             alert_when_below = False
-        time.sleep(30)
+            wait = 3600 * 12
+            print('sleeping for the night')
+        print('.', end='')
+        time.sleep(wait)
 
 
 if __name__ == '__main__':
